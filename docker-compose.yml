@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: coding_assistant
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DATABASE_URL=postgresql://user:password@postgres:5432/coding_assistant
+      - JWT_SECRET=your_jwt_secret
+      - JWT_EXPIRES_IN=7d
+      - OPENAI_API_KEY=your_openai_api_key
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  postgres_data: 

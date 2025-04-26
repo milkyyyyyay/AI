@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: ai-coding-assistant-backend
+    env: node
+    buildCommand: cd backend && npm install && npm run build
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ai-coding-assistant-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: FRONTEND_URL
+        value: https://ai-coding-assistant.vercel.app
+      - key: CORS_ORIGIN
+        value: https://ai-coding-assistant.vercel.app
+    healthCheckPath: /api/health
+    autoDeploy: true
+    plan: free
+
+databases:
+  - name: ai-coding-assistant-db
+    databaseName: coding_assistant
+    user: user
+    plan: free
+    ipAllowList: [] 
